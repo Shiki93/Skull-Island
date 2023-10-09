@@ -1,14 +1,14 @@
 import pygame
 from support import import_csv_layout, import_cut_graphics
 from settings import tile_size
-from tiles import Tile, StaticTile, Crate
+from tiles import Tile, StaticTile, Crate, Coin
 
 class Level:
     def __init__(self, level_data, surface):
         
         #general setup
         self.display_surface = surface
-        self.world_shift = -5
+        self.world_shift = -1
 
         #terrain setup
         terrain_layout = import_csv_layout(level_data['terrain'])
@@ -21,6 +21,10 @@ class Level:
         #Crates setup
         crate_layout = import_csv_layout(level_data['crates'])
         self.crate_sprites = self.create_tile_group(crate_layout,'crates')
+
+        #coins
+        coins_layout = import_csv_layout(level_data['coins'])
+        self.coins_sprites = self.create_tile_group(coins_layout, 'coins')
     
     def create_tile_group(self, layout, type):
         sprite_group = pygame.sprite.Group()
@@ -39,6 +43,11 @@ class Level:
                         sprite = StaticTile(tile_size, x, y, tile_surface)
                     if type == 'crates':
                         sprite = Crate(tile_size,x,y)
+                    if type == 'coins':
+                        if val == '0':
+                            sprite = Coin(tile_size, x, y, 'E:/Programacion/Skull Island/graphics/coins/gold')
+                        if val == '1':
+                            sprite = Coin(tile_size, x, y, 'E:/Programacion/Skull Island/graphics/coins/silver')
                     sprite_group.add(sprite)
         return sprite_group
 
@@ -55,3 +64,7 @@ class Level:
         #Crates
         self.crate_sprites.update(self.world_shift)
         self.crate_sprites.draw(self.display_surface)
+
+        #Coins
+        self.coins_sprites.update(self.world_shift)
+        self.coins_sprites.draw(self.display_surface)
